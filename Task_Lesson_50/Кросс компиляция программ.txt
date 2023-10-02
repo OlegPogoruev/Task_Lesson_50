@@ -1,0 +1,55 @@
+
+Для программы Hello, word
+arm-linux-gnueabihf-gcc main.c -o hello.out --static
+
+
+
+
+Для программы hexdump
+arm-linux-gnueabihf-gcc -o hex hexdump.c --static -g -O2 -std=c99 -Wall -Wextra -Werror  -DHEXDUMP_MAIN
+
+
+
+
+Для программы openssh (как я понял её нужно было просто скомпилировать). Здесь я решил проблему компиляции не лучшим образом.
+
+ДЛЯ ZLIB
+/************************************************************/
+ARCH=arm \
+CC=arm-linux-gnueabihf-gcc ./configure \
+--static \
+make
+sudo make install DESTDIR=/home/oleg/Elteks/Task_Lesson_50/arm_openssh/build_zlib-1.2.8/
+/************************************************************/
+
+
+ДЛЯ OPENSSL
+/************************************************************/
+CROSS_COMPILE=arm-linux-gnueabihf- CC="gcc" ./Configure \
+dist \
+--prefix=/home/oleg/Elteks/Task_Lesson_50/arm_openssh/build_openssl-1.0.2d
+make
+sudo make install
+/************************************************************/
+
+
+ДЛЯ OPENSSH (здесь проблема компиляции была решена правкой файла xcrypt.c . Это не изящное и частичное решение)
+/************************************************************/
+cross=arm-linux-gnueabihf- \
+CC="${cross}gcc" AR="${cross}ar" ./configure \
+--disable-etc-default-login \
+--disable-strip \
+--host=arm-linux-gnueabihf \
+--with-libs \
+--with-zlib=/home/oleg/Elteks/Task_Lesson_50/arm_openssh/build_zlib-1.2.8/usr/local \
+--with-ssl-dir=/home/oleg/Elteks/Task_Lesson_50/arm_openssh/openssl-1.0.2d/ \
+--prefix=/home/oleg/Elteks/Task_Lesson_50/arm_openssh/build_openssh-5.8p
+make USE_LIBCRYPT=
+sudo make install
+/************************************************************/
+
+
+
+
+
+
